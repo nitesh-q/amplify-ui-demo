@@ -78,82 +78,23 @@ const App = () => {
                 TODO LIST
             </Text>
 
-            {/* <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginBottom: '20px'
-                }}
-            >
-                <input
-                    style={{
-                        fontSize: '1.2rem',
-                        padding: '10px',
-                        marginRight: '10px',
-                        flexGrow: '1',
-                        borderRadius: '4px',
-                        border: '1px solid #ccc',
-                    }}
-                    placeholder="Add item..."
-                    value={userInput}
-                    onChange={(item) =>
-                        updateInput(item.target.value)}
-                />
 
-                <button
-                    style={{
-                        fontSize: '1.2rem',
-                        padding: '10px 20px',
-                        backgroundColor: '#4caf50',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                    }}
+            <Flex>
+                <TextField
+                    placeholder="Add item..."
+                    labelHidden={true}
+                    value={userInput}
+                    onChange={(item) => updateInput(item.target.value)}
+                    size="large"
+                    width='475px'
+                />
+                <Button
+                    cursor='pointer'
                     onClick={addItem}
                 >
-                    ADD
-                </button>
-
-            </div>
-             */}
-                <Flex direction='row'>
-                    <TextField
-                        size="large"
-                        fontSize='1.2rem'
-                        padding='10px'
-                        marginRight='10px'
-                        borderRadius='4px'
-                        flexGrow='1'
-                        placeholder="Add item..."
-                        value={userInput}
-                        onChange={(item) =>
-                            updateInput(item.target.value)}
-                        width='500px'
-                    />
-                    <Button
-                       
-                        fontSize='12px'
-                        padding='10px 20px'
-                        variation="primary"
-                        color='white'
-                        border='none'
-                        borderRadius='8px'
-                        cursor='pointer'
-                        onClick={addItem}
-                    >
-                        <Text
-                            // textTransform='none'
-                            textDecoration='none'
-                        >Add</Text>
-                    </Button>
-
-                </Flex>
-            
-
-
-
-
+                    <Text>Add</Text>
+                </Button>
+            </Flex>
 
 
             <div

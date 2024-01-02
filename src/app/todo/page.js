@@ -2,6 +2,12 @@
 import React, { useState } from 'react';
 import { View, Text, Flex, Button, TextField } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
+import { generateClient } from 'aws-amplify/api';
+import { createTodoModel } from '@/graphql/mutations';
+import {listTodoModels, getTodoModel } from '@/graphql/queries';
+
+
+const client = generateClient()
 
 const App = () => {
     const [userInput, setUserInput] = useState('');
@@ -30,6 +36,20 @@ const App = () => {
             setUserInput('');
         }
     };
+
+
+
+    const page_1 = async () => {
+        // List all items
+        const allTodoModels = await client.graphql({
+            query: listTodoModels
+        });
+        console.log('allTodoModels...',allTodoModels);
+    }
+
+
+
+
 
     // Function to delete item from list using id to delete 
     const deleteItem = (key) => {
@@ -93,6 +113,12 @@ const App = () => {
                     onClick={addItem}
                 >
                     <Text>Add</Text>
+                </Button>
+                <Button
+                    cursor='pointer'
+                    onClick={page_1}
+                >
+                    <Text>check data</Text>
                 </Button>
             </Flex>
 

@@ -10,6 +10,11 @@
       "StackName": "amplify-amplifyuidemo-staging-72750",
       "StackId": "arn:aws:cloudformation:us-west-1:464871392770:stack/amplify-amplifyuidemo-staging-72750/6fbd92c0-a940-11ee-b66f-0622d20577b3",
       "AmplifyAppId": "d1wnzkmwi8rhll"
+    },
+    "categories": {
+      "api": {
+        "amplifyuidemo": {}
+      }
     }
   }
 }

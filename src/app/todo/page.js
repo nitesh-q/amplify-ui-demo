@@ -1,11 +1,20 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Flex, Button, TextField } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/api';
-import { createTodoModel } from '@/graphql/mutations';
-import {listTodoModels, getTodoModel } from '@/graphql/queries';
+import { createTodoModel, deleteTodoModel, updateTodoModel } from '@/graphql/mutations';
+import { listTodoModels, getTodoModel } from '@/graphql/queries';
+import { Amplify } from 'aws-amplify';
 
+
+Amplify.configure({
+    "aws_project_region": "us-west-1",
+    "aws_appsync_graphqlEndpoint": "https://pnrzy654xbhjnc42rhdb6y67aa.appsync-api.us-west-1.amazonaws.com/graphql",
+    "aws_appsync_region": "us-west-1",
+    "aws_appsync_authenticationType": "API_KEY",
+    "aws_appsync_apiKey": "da2-wyzwsinpnjelza6znmx3qnog7y"
+});
 
 const client = generateClient()
 
@@ -19,7 +28,7 @@ const App = () => {
     };
 
     // Add item if user input is not empty 
-    const addItem = () => {
+    const addItem = async () => {
         if (userInput !== '') {
             const userInputItem = {
                 // Add a random id which is used to delete 
@@ -29,42 +38,81 @@ const App = () => {
                 value: userInput,
             };
 
+            const newTodoModel = await client.graphql({
+                query: createTodoModel,
+                variables: {
+                    input: {
+                        "title": userInput
+                    }
+                }
+            });
+            console.log('newTodoModel...', newTodoModel)
+
+
+
             // Update list 
             setList([...list, userInputItem]);
+            console.log('additem...', userInputItem)
 
             // Reset state 
             setUserInput('');
         }
     };
 
-
+    useEffect(() => {
+        page_1()
+    }, [])
 
     const page_1 = async () => {
         // List all items
         const allTodoModels = await client.graphql({
             query: listTodoModels
         });
-        console.log('allTodoModels...',allTodoModels);
+        setList([...allTodoModels?.data?.listTodoModels?.items]);
+        const a1 = allTodoModels?.data?.listTodoModels?.items.map((i) => { return { id: i.id, value: i.title } })
+        console.log('allTodoModels...', a1)
     }
+    console.log('list...', list)
 
 
 
 
 
     // Function to delete item from list using id to delete 
-    const deleteItem = (key) => {
-        const updatedList =
-            list.filter((item) => item.id !== key);
-        setList(updatedList);
+    const deleteItem = async (key) => {
+        const updatedList = list.filter((item) => item.id !== key);
+        const deletedTodoModel = await client.graphql({
+            query: deleteTodoModel,
+            variables: {
+                input: {
+                    id: `${key}`
+                }
+            }
+        });
+        if (deletedTodoModel) {
+            location.reload();
+        }
     };
 
-    const editItem = (index) => {
+    const editItem = async (index) => {
         const editedTodo = prompt('Edit the todo:');
-        if (editedTodo !== null && editedTodo.trim() !== '') {
-            const updatedTodos = [...list];
-            updatedTodos[index].value = editedTodo;
-            setList(updatedTodos);
+        if (editedTodo) {
+            const updatedTodoModels = await client.graphql({
+                query: updateTodoModel,
+                variables: {
+                    input: {
+                        id: `${index}`,
+                        "title": `${editedTodo}`
+                    }
+                }
+            });
+            if (updatedTodoModels) {
+                location.reload();
+            }
         }
+
+
+
     };
 
     return (
@@ -145,7 +193,7 @@ const App = () => {
                                 fontSize: '1.2rem',
                                 flexGrow: '1'
                             }}>
-                                {item.value}
+                                {item.value || item.title}
                             </span>
                             <span>
                                 <button
@@ -171,7 +219,7 @@ const App = () => {
                                         borderRadius: '8px',
                                         cursor: 'pointer',
                                     }}
-                                    onClick={() => editItem(index)}
+                                    onClick={() => editItem(item.id)}
                                 >
                                     Edit
                                 </button>
